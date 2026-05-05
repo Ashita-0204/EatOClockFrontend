@@ -1,0 +1,80 @@
+<div class="checkout-page">
+  <div class="container">
+    <header class="checkout-header">
+      <a routerLink="/customer/cart" class="btn-back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"></path>
+        </svg>
+        Back to Cart
+      </a>
+      <h1>Checkout</h1>
+    </header>
+
+    <div class="checkout-grid" *ngIf="!loading && cart">
+      <div class="checkout-form">
+        <section class="form-section">
+          <h2>Delivery Address</h2>
+          <div class="input-group">
+            <textarea [(ngModel)]="address" placeholder="Enter your full address (e.g. House No, Street, Landmark)"></textarea>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>Payment Method</h2>
+          <div class="payment-options">
+            <label class="payment-option" *ngFor="let method of paymentMethods" [class.selected]="selectedPaymentMethod === method.id">
+              <input type="radio" name="payment" [value]="method.id" [(ngModel)]="selectedPaymentMethod">
+              <span class="method-icon">{{ method.icon }}</span>
+              <span class="method-label">{{ method.label }}</span>
+              <span class="checkmark" *ngIf="selectedPaymentMethod === method.id">✓</span>
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <aside class="order-preview">
+        <div class="preview-card">
+          <h2>Order Summary</h2>
+          <div class="restaurant-tag">{{ cart.restaurantName }}</div>
+          
+          <div class="items-preview">
+            <div class="preview-item" *ngFor="let item of cart.items">
+              <span class="qty">{{ item.quantity }}x</span>
+              <span class="name">{{ item.name }}</span>
+              <span class="price">{{ (item.price * item.quantity) | currency:'INR' }}</span>
+            </div>
+          </div>
+
+          <div class="summary-details">
+            <div class="summary-row">
+              <span>Item Total</span>
+              <span>{{ cart.totalPrice | currency:'INR' }}</span>
+            </div>
+            <div class="summary-row discount" *ngIf="cart.totalPrice > cart.discountedTotal">
+              <span>Promo Discount</span>
+              <span>-{{ (cart.totalPrice - cart.discountedTotal) | currency:'INR' }}</span>
+            </div>
+            <div class="summary-row delivery">
+              <span>Delivery Fee</span>
+              <span class="free">FREE</span>
+            </div>
+            <div class="summary-row total">
+              <span>To Pay</span>
+              <span>{{ cart.discountedTotal | currency:'INR' }}</span>
+            </div>
+          </div>
+
+          <button class="btn-place-order" [disabled]="submitting" (click)="placeOrder()">
+            {{ submitting ? 'Placing Order...' : 'Confirm Order' }}
+          </button>
+          <p class="safe-tag">🔒 Safe & Secure Payments</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Preparing checkout...</p>
+    </div>
+  </div>
+</div>

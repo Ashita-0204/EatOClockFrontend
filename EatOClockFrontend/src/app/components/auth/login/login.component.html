@@ -1,0 +1,76 @@
+<div class="auth-page">
+  <div class="split-container">
+    <!-- Left side: Image & Quote -->
+    <div class="auth-image-side">
+      <img src="https://www.georgeinstitute.org/sites/default/files/styles/image_ratio_2_1_large/public/2020-10/world-food-day-2020.png.webp?itok=-h1y_Rz0" alt="Food">
+      <div class="overlay">
+        <div class="quote-box">
+          <p class="quote">"Good food is all the sweeter when shared with good friends"</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right side: Login Form -->
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <div class="brand">
+          <span class="brand-name">EatOClock</span>
+        </div>
+
+        <div class="card-header">
+          <h1 class="card-title">Login</h1>
+          <p class="card-subtitle">Enter your details to satisfy your cravings</p>
+        </div>
+
+        <div class="alert alert-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="form-field">
+            <label class="form-label" for="email">Email address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input
+                id="email"
+                type="email"
+                class="form-input"
+                formControlName="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-input"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            <span *ngIf="!loading">Login</span>
+            <span *ngIf="loading">Logging in...</span>
+          </button>
+        </form>
+
+        <p class="card-footer">
+          New to EatOClock?
+          <a routerLink="/auth/register" class="link">Create account</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

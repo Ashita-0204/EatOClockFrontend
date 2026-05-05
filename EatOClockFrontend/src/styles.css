@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Coffee & Caramel Palette */
+  --coffee-900: #2c1e12;
+  --coffee-800: #4b3621;
+  --coffee-700: #6f4e37;
+  --coffee-600: #8b5e3c;
+  --caramel-500: #a67c52;
+  --caramel-400: #c68e17;
+  --caramel-300: #d4a373;
+  --caramel-200: #e6ccb2;
+  --caramel-100: #ede0d4;
+  --bg-cream: #ffedd8;
+
+  /* UI Tokens */
+  --primary: var(--coffee-700);
+  --primary-dark: var(--coffee-800);
+  --accent: var(--caramel-400);
+  --white: #ffffff;
+  --bg-light: var(--bg-cream);
+  --text-main: #3b2413;
+  --text-muted: rgba(59, 36, 19, 0.7);
+  --border-color: rgba(96, 56, 8, 0.12);
+  --shadow-sm: 0 2px 8px rgba(96, 56, 8, 0.05);
+  --shadow-md: 0 4px 16px rgba(96, 56, 8, 0.1);
+  --shadow-lg: 0 8px 32px rgba(96, 56, 8, 0.15);
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+/* Layout Utilities */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  background-color: var(--white);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 280px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Button System */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background-color: var(--coffee-700);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(111, 78, 55, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--coffee-800);
+  box-shadow: 0 6px 16px rgba(75, 54, 33, 0.4);
+}
+
+.btn-success {
+  background-color: #556b2f; /* Dark Olive Green - fits coffee theme better than bright green */
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background-color: #4b5d26;
+}
+
+.btn-ghost {
+  background-color: var(--caramel-100);
+  color: var(--coffee-800);
+}
+
+.btn-ghost:hover {
+  background-color: var(--caramel-200);
+}
+
+/* Card System */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Table System */
+.premium-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.premium-table th {
+  text-align: left;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.premium-table tr td {
+  padding: 1.25rem 1rem;
+  background: var(--white);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.premium-table tr td:first-child {
+  border-left: 1px solid var(--border-color);
+  border-radius: 12px 0 0 12px;
+}
+
+.premium-table tr td:last-child {
+  border-right: 1px solid var(--border-color);
+  border-radius: 0 12px 12px 0;
+}
+
+/* Status Badges */
+.badge {
+  padding: 5px 10px;
+  border-radius: 30px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-coffee { background: var(--caramel-100); color: var(--coffee-800); }
+.badge-caramel { background: var(--caramel-200); color: var(--coffee-900); }
+
+/* Spacing Utilities */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.w-full { width: 100%; }
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,103 @@
+<div class="dashboard-container">
+  <app-customer-sidebar></app-customer-sidebar>
+  <div class="main-content fade-in">
+  <div class="content-header">
+    <div>
+      <h1 class="page-title">Order History</h1>
+      <p class="page-subtitle">View and reorder your favorite meals</p>
+    </div>
+  </div>
+
+  <div class="history-list" *ngIf="!loading && orders.length > 0">
+    <div class="card order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div class="res-info">
+          <h3>{{ order.restaurantName }}</h3>
+          <p class="order-meta">{{ order.createdAt | date:'mediumDate' }} • #{{ order.orderId.substring(0, 8) }}</p>
+        </div>
+        <div class="status-badge" [ngClass]="getStatusClass(order.status)">
+          {{ order.status }}
+        </div>
+      </div>
+
+      <div class="order-body">
+        <div class="items-list">
+          <span *ngFor="let item of order.items; let last = last">
+            {{ item.quantity }}x {{ item.name }}{{ last ? '' : ', ' }}
+          </span>
+        </div>
+        
+        <div class="order-footer">
+          <div class="price-tag">
+            Total: <strong>{{ order.finalAmount | currency:'INR' }}</strong>
+          </div>
+          <div class="action-group">
+            <a [routerLink]="['/customer/orders', order.orderId]" class="btn btn-ghost">Details</a>
+            <button class="btn btn-success" *ngIf="order.status === 'DELIVERED'" (click)="openReviewModal(order)">
+              <i class="fas fa-star"></i> Review
+            </button>
+            <button class="btn btn-primary" (click)="reorder(order)">
+              <i class="fas fa-redo"></i> Reorder
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card empty-state" *ngIf="!loading && orders.length === 0">
+    <div class="empty-icon">📜</div>
+    <h2>No orders yet</h2>
+    <p>Your history will appear here once you place an order.</p>
+    <a routerLink="/customer" class="btn btn-primary">Browse Restaurants</a>
+  </div>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal-backdrop" *ngIf="showReviewModal">
+    <div class="card modal-card fade-in">
+      <div class="modal-header">
+        <h2>Rate Your Meal</h2>
+        <button class="close-btn" (click)="showReviewModal = false">&times;</button>
+      </div>
+
+      <div class="rating-section">
+        <div class="rating-group">
+          <label>Food Quality</label>
+          <div class="stars">
+            <input type="radio" id="f5" name="food" [value]="5" [(ngModel)]="reviewForm.foodRating"><label for="f5">★</label>
+            <input type="radio" id="f4" name="food" [value]="4" [(ngModel)]="reviewForm.foodRating"><label for="f4">★</label>
+            <input type="radio" id="f3" name="food" [value]="3" [(ngModel)]="reviewForm.foodRating"><label for="f3">★</label>
+            <input type="radio" id="f2" name="food" [value]="2" [(ngModel)]="reviewForm.foodRating"><label for="f2">★</label>
+            <input type="radio" id="f1" name="food" [value]="1" [(ngModel)]="reviewForm.foodRating"><label for="f1">★</label>
+          </div>
+        </div>
+
+        <div class="rating-group">
+          <label>Delivery Service</label>
+          <div class="stars">
+            <input type="radio" id="d5" name="del" [value]="5" [(ngModel)]="reviewForm.deliveryRating"><label for="d5">★</label>
+            <input type="radio" id="d4" name="del" [value]="4" [(ngModel)]="reviewForm.deliveryRating"><label for="d4">★</label>
+            <input type="radio" id="d3" name="del" [value]="3" [(ngModel)]="reviewForm.deliveryRating"><label for="d3">★</label>
+            <input type="radio" id="d2" name="del" [value]="2" [(ngModel)]="reviewForm.deliveryRating"><label for="d2">★</label>
+            <input type="radio" id="d1" name="del" [value]="1" [(ngModel)]="reviewForm.deliveryRating"><label for="d1">★</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="comment-group">
+        <label>Your Feedback</label>
+        <textarea [(ngModel)]="reviewForm.comment" placeholder="Tell us about the taste and delivery..."></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="showReviewModal = false">Cancel</button>
+        <button class="btn btn-primary" (click)="submitReview()">Post Review</button>
+      </div>
+      </div>
+</div>
+  </div>
+</div>

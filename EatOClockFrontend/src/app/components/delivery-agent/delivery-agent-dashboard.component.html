@@ -1,0 +1,201 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🏍️</div>
+      <span class="brand-name">Agent Hub</span>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-item" [class.active]="activeTab === 'rides'" (click)="setTab('rides')">
+        <i class="fas fa-search-location"></i> Rides
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'history'" (click)="setTab('history')">
+        <i class="fas fa-history"></i> Past Rides
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Exit App
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+
+    <!-- ===== TAB 1: RIDES (Browse + Active) ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'rides'">
+      <header class="content-header">
+        <div>
+          <h1 class="page-title">My Rides</h1>
+          <p class="page-subtitle">Browse available deliveries and manage your active rides</p>
+        </div>
+        <!-- Performance Summary Chips -->
+        <div class="perf-chips" *ngIf="agentProfile">
+          <div class="chip"><i class="fas fa-star"></i> {{ avgRating | number:'1.1-1' }}</div>
+          <div class="chip"><i class="fas fa-box"></i> {{ totalRides }} Done</div>
+          <div class="chip"><i class="fas fa-rupee-sign"></i> {{ totalEarned | number:'1.0-0' }}</div>
+        </div>
+      </header>
+
+      <div class="dual-section mt-4">
+        <!-- LEFT: Browse Available -->
+        <div class="section-panel">
+          <h2 class="section-heading"><i class="fas fa-broadcast-tower"></i> Available Rides</h2>
+          <div class="rides-list">
+            <div class="card ride-card fade-in" *ngFor="let ride of availableOrders">
+              <div class="ride-header">
+                <div class="res-info">
+                  <span class="res-tag">PICKUP</span>
+                  <h3>{{ ride.restaurantName || 'Restaurant' }}</h3>
+                </div>
+                <div class="fare-box">
+                  <span class="fare-label">Earn</span>
+                  <span class="fare-val">₹{{ ride.finalAmount * 0.1 | number:'1.0-0' }}</span>
+                </div>
+              </div>
+
+              <div class="ride-body">
+                <div class="route-item">
+                  <div class="dot pickup"></div>
+                  <div class="route-info">
+                    <label>From</label>
+                    <p>{{ ride.restaurantName || 'Restaurant Location' }}</p>
+                  </div>
+                </div>
+                <div class="route-line"></div>
+                <div class="route-item">
+                  <div class="dot drop"></div>
+                  <div class="route-info">
+                    <label>To</label>
+                    <p>{{ ride.deliveryAddress }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ride-footer">
+                <div class="order-meta">
+                  <span><i class="fas fa-shopping-basket"></i> {{ ride.items.length }} Items</span>
+                  <span><i class="fas fa-wallet"></i> {{ ride.modeOfPayment }}</span>
+                </div>
+                <button class="btn btn-primary btn-accept" (click)="$event.stopPropagation(); acceptRide(ride.orderId)">
+                  Accept
+                </button>
+              </div>
+            </div>
+
+            <div class="empty-state" *ngIf="availableOrders.length === 0">
+              <i class="fas fa-map-marked-alt"></i>
+              <p>No rides available right now. Stay tuned!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Active Rides -->
+        <div class="section-panel">
+          <h2 class="section-heading"><i class="fas fa-route"></i> Active Rides</h2>
+          <div class="rides-list">
+            <div class="card ride-card active-ride fade-in" *ngFor="let ride of myActiveRides">
+              <div class="ride-status-bar" [class.preparing]="ride.status === 'READY_FOR_PICKUP'" [class.picked]="ride.status === 'PICKED_UP'">
+                {{ ride.status | titlecase }}
+              </div>
+              <div class="ride-header">
+                <div class="res-info">
+                  <h3>{{ ride.restaurantName || 'Restaurant' }}</h3>
+                  <p class="addr"><i class="fas fa-map-marker-alt"></i> To: {{ ride.deliveryAddress }}</p>
+                </div>
+              </div>
+
+              <div class="ride-footer mt-3">
+                <button class="btn btn-primary w-full mb-2"
+                  *ngIf="ride.status === 'READY_FOR_PICKUP'"
+                  (click)="confirmPickup(ride.orderId)">
+                  <i class="fas fa-box-open"></i> Confirm Pickup
+                </button>
+                <button class="btn btn-success w-full"
+                  *ngIf="ride.status === 'PICKED_UP'"
+                  (click)="completeDelivery(ride.orderId)">
+                  <i class="fas fa-check-circle"></i> Complete Delivery
+                </button>
+                <p class="status-msg" *ngIf="ride.status === 'CONFIRMED' || ride.status === 'PREPARING'">
+                  <i class="fas fa-spinner fa-spin"></i> Waiting for restaurant to prepare...
+                </p>
+              </div>
+            </div>
+
+            <div class="empty-state" *ngIf="myActiveRides.length === 0">
+              <i class="fas fa-box-open"></i>
+              <p>No active deliveries. Browse and accept a ride!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: PAST RIDES + PERFORMANCE ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'history'">
+      <header class="content-header">
+        <div>
+          <h1 class="page-title">Past Rides & Performance</h1>
+          <p class="page-subtitle">Your delivery history and earnings analytics</p>
+        </div>
+      </header>
+
+      <!-- Stats -->
+      <div class="stats-grid mt-4">
+        <div class="card stat-card">
+          <span class="stat-label">Total Earned</span>
+          <span class="stat-val">₹{{ totalEarned | number:'1.0-0' }}</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Rides Completed</span>
+          <span class="stat-val">{{ totalRides }}</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Avg Rating</span>
+          <span class="stat-val">⭐ {{ avgRating | number:'1.1-1' }}</span>
+        </div>
+      </div>
+
+      <div class="details-grid-perf mt-4">
+        <!-- Past Rides List -->
+        <div class="card perf-section">
+          <h3><i class="fas fa-list-ul"></i> Ride History</h3>
+          <div class="history-list">
+            <div class="history-item" *ngFor="let ride of pastRides">
+              <div class="hist-info">
+                <strong>{{ ride.restaurantName || 'Restaurant' }}</strong>
+                <span class="hist-addr">{{ ride.deliveryAddress }}</span>
+                <span class="hist-date">{{ ride.updatedAt | date:'medium' }}</span>
+              </div>
+              <div class="hist-amt">+₹{{ ride.finalAmount * 0.1 | number:'1.0-0' }}</div>
+            </div>
+            <div class="empty-mini" *ngIf="pastRides.length === 0">
+              <i class="fas fa-inbox"></i> No rides completed yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Reviews -->
+        <div class="card perf-section">
+          <h3><i class="fas fa-comments"></i> Customer Feedback</h3>
+          <div class="reviews-list">
+            <div class="review-item" *ngFor="let rev of agentReviews">
+              <div class="rev-header">
+                <span class="stars">⭐ {{ rev.deliveryRating }}</span>
+                <span class="date">{{ rev.createdAt | date:'shortDate' }}</span>
+              </div>
+              <p class="comment">"{{ rev.comment || 'No comment provided' }}"</p>
+            </div>
+            <div class="empty-mini" *ngIf="agentReviews.length === 0">
+              <i class="fas fa-comment-slash"></i> No reviews received yet.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>

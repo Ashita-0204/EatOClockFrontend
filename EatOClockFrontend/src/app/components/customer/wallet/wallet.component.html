@@ -1,0 +1,65 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <app-customer-sidebar></app-customer-sidebar>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <div class="wallet-container">
+      <div class="wallet-header">
+        <h1 class="page-title">My Wallet</h1>
+        <p class="page-subtitle">Manage your funds and top up for quick payments</p>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="balance-card">
+        <div class="balance-icon">💳</div>
+        <div class="balance-info">
+          <div class="balance-label">CURRENT BALANCE</div>
+          <div class="balance-amount">
+            <span *ngIf="!walletLoading">₹{{ walletBalance.toFixed(2) }}</span>
+            <div *ngIf="walletLoading" class="spinner-sm"></div>
+          </div>
+          <div class="balance-note">Ready to use for your next meal</div>
+        </div>
+      </div>
+
+      <!-- Top-up Section -->
+      <div class="topup-card">
+        <h2 class="topup-title">Add Money</h2>
+        <p class="topup-subtitle">Select an amount to top up your wallet</p>
+
+        <div class="quick-amounts">
+          <button class="quick-chip" (click)="topupAmount = 100">₹100</button>
+          <button class="quick-chip" (click)="topupAmount = 200">₹200</button>
+          <button class="quick-chip" (click)="topupAmount = 500">₹500</button>
+          <button class="quick-chip" (click)="topupAmount = 1000">₹1000</button>
+        </div>
+
+        <div class="input-group">
+          <span class="input-prefix">₹</span>
+          <input 
+            type="number" 
+            [(ngModel)]="topupAmount" 
+            placeholder="Enter custom amount" 
+            class="amount-input"
+            [disabled]="topupProcessing"
+          >
+        </div>
+
+        <button 
+          class="btn-pay" 
+          (click)="initiateTopup()" 
+          [disabled]="topupProcessing || !topupAmount || topupAmount <= 0"
+        >
+          <span *ngIf="!topupProcessing">Add Funds to Wallet</span>
+          <div *ngIf="topupProcessing" class="spinner-sm btn-spin"></div>
+        </button>
+
+        <p class="topup-disclaimer">
+          Secure payments powered by <b>Razorpay</b>.<br>
+          Funds are added instantly to your wallet.
+        </p>
+      </div>
+    </div>
+  </main>
+</div>

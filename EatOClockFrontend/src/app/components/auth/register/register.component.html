@@ -1,0 +1,103 @@
+<div class="auth-page">
+  <div class="split-container">
+    <!-- Left side: Form -->
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <div class="brand">
+          <span class="brand-name">EatOClock</span>
+        </div>
+
+        <div class="card-header">
+          <h1 class="card-title">Create Account</h1>
+          <p class="card-subtitle">Join our community of food lovers</p>
+        </div>
+
+        <div class="alert alert-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="fullName">Full Name</label>
+              <div class="input-wrapper">
+                <i class="fas fa-user input-icon"></i>
+                <input
+                  id="fullName"
+                  type="text"
+                  class="form-input"
+                  formControlName="fullName"
+                  placeholder="Jane Smith"
+                  autocomplete="name"
+                />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="reg-email">Email</label>
+              <div class="input-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input
+                  id="reg-email"
+                  type="email"
+                  class="form-input"
+                  formControlName="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="reg-password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input
+                id="reg-password"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-input"
+                formControlName="password"
+                placeholder="Min. 6 characters"
+                autocomplete="new-password"
+              />
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Join as</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user-tag input-icon"></i>
+              <select formControlName="role" class="form-input select-input">
+                <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            <span *ngIf="!loading">Create Account</span>
+            <span *ngIf="loading">Creating Account...</span>
+          </button>
+        </form>
+
+        <p class="card-footer">
+          Already have an account?
+          <a routerLink="/auth/login" class="link">Login here</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right side: Image & Quote -->
+    <div class="auth-image-side">
+      <img src="https://www.ficsi.in/blog/wp-content/uploads/2025/05/Blog-2.jpg" alt="Food">
+      <div class="overlay">
+        <div class="quote-box">
+          <p class="quote">"One cannot think well, love well, sleep well, if one has not dined well"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

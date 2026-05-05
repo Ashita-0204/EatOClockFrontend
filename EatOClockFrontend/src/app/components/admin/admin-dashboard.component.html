@@ -1,0 +1,216 @@
+<div class="dashboard-container admin-theme">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <span class="brand-name">Admin Core</span>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-item" [class.active]="activeSection === 'stats'" (click)="setSection('stats')">
+        <i class="fas fa-microchip"></i>
+        System Health
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'restaurants'" (click)="setSection('restaurants')">
+        <i class="fas fa-store-slash"></i>
+        Outlet Approval
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'agents'" (click)="setSection('agents')">
+        <i class="fas fa-truck-monster"></i>
+        Fleet Ops
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'orders'" (click)="setSection('orders')">
+        <i class="fas fa-globe"></i>
+        Global Orders
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-dark" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        Terminate Session
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <div class="content-header">
+      <div>
+        <h1 class="page-title">Admin Terminal</h1>
+        <p class="page-subtitle">Platform-wide oversight and control</p>
+      </div>
+      <div class="header-actions">
+        <div class="admin-profile">
+          <div class="avatar-circle">AD</div>
+        </div>
+      </div>
+    </div>
+    <!-- SYSTEM STATS -->
+    <div class="tab-content" *ngIf="activeSection === 'stats'">
+      <h2 class="section-title mb-3">System Health Metrics</h2>
+      <div class="stats-grid-admin">
+        <div class="card admin-stat-card">
+          <div class="stat-main">
+            <span class="label">Platform Users</span>
+            <span class="value">{{ stats.totalUsers }}</span>
+          </div>
+          <p class="stat-meta">+12% from last week</p>
+        </div>
+        <div class="card admin-stat-card">
+          <div class="stat-main">
+            <span class="label">Total Transactions</span>
+            <span class="value">{{ stats.totalOrders }}</span>
+          </div>
+          <p class="stat-meta">Avg. ₹{{ (stats.totalRevenue / stats.totalOrders) | number:'1.0-0' }} per order</p>
+        </div>
+        <div class="card admin-stat-card">
+          <div class="stat-main">
+            <span class="label">Gross Revenue</span>
+            <span class="value">₹{{ stats.totalRevenue | number }}</span>
+          </div>
+          <p class="stat-meta">7.2% tax collected</p>
+        </div>
+        <div class="card admin-stat-card">
+          <div class="stat-main">
+            <span class="label">Active Fleet</span>
+            <span class="value">{{ stats.activeAgents }}</span>
+          </div>
+          <p class="stat-meta">98% availability rate</p>
+        </div>
+      </div>
+
+      <div class="card mt-4 platform-log">
+        <h3>Network Nodes & Resources</h3>
+        <div class="resource-grid mt-2">
+          <div class="res-node">
+            <span class="node-label">Auth_Service</span>
+            <div class="status-pill active">Online</div>
+          </div>
+          <div class="res-node">
+            <span class="node-label">Order_Service</span>
+            <div class="status-pill active">Online</div>
+          </div>
+          <div class="res-node">
+            <span class="node-label">Review_Service</span>
+            <div class="status-pill active">Online</div>
+          </div>
+          <div class="res-node">
+            <span class="node-label">Notification_Service</span>
+            <div class="status-pill warning">High Latency</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESTAURANT APPROVAL -->
+    <div class="tab-content" *ngIf="activeSection === 'restaurants'">
+      <div class="card">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>Restaurant Name</th>
+              <th>Owner Contact</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of allRestaurants">
+              <td><strong>{{ res.name }}</strong></td>
+              <td>{{ res.email }}</td>
+              <td>{{ res.address }}</td>
+              <td>
+                <span class="badge" [class.badge-grn]="res.isApproved" [class.badge-lav]="!res.isApproved">
+                  {{ res.isApproved ? 'AUTHORIZED' : 'PENDING' }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group-sm">
+                  <button class="btn btn-primary btn-sm" *ngIf="!res.isApproved" (click)="approveRestaurant(res.id)">Approve</button>
+                  <button class="btn btn-ghost btn-sm" *ngIf="res.isApproved" (click)="rejectRestaurant(res.id)">Deactivate</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FLEET MANAGEMENT -->
+    <div class="tab-content" *ngIf="activeSection === 'agents'">
+      <div class="tab-header-flex">
+        <h2 class="section-title">Fleet Logistics</h2>
+        <button class="btn btn-primary" (click)="seedDemoAgents()" *ngIf="allAgents.length === 0">
+          <i class="fas fa-magic"></i> Seed Demo Agents
+        </button>
+      </div>
+      <div class="agent-grid-admin mt-4">
+        <div class="card agent-admin-card fade-in" *ngFor="let agent of allAgents">
+          <div class="agent-admin-header">
+            <div class="agent-info-main">
+              <span class="agent-id">#{{ agent.agentId?.substring(0,6) || 'N/A' }}</span>
+              <h4>{{ agent.fullName || 'Unknown Agent' }}</h4>
+            </div>
+            <div class="live-dot" [class.online]="agent.isAvailable" [title]="agent.isAvailable ? 'Online' : 'Offline'"></div>
+          </div>
+          <div class="agent-admin-body">
+            <p><i class="fas fa-motorcycle"></i> {{ agent.vehicleType || 'Vehicle' }} <span *ngIf="agent.vehicleNumber">({{ agent.vehicleNumber }})</span></p>
+            <p><i class="fas fa-phone"></i> {{ agent.phone || agent.phoneNumber || 'No phone' }}</p>
+            <p><i class="fas fa-star" style="color: #f1c40f;"></i> {{ agent.averageRating | number:'1.1-1' }} <span class="text-muted">({{ agent.totalDeliveries }} Deliveries)</span></p>
+            <p><i class="fas fa-id-card"></i> <span [class.text-success]="agent.isVerified">{{ agent.isVerified ? 'Verified' : 'Unverified' }}</span></p>
+          </div>
+          <div class="agent-admin-footer">
+            <div class="btn-group-column" *ngIf="!agent.isVerified">
+              <button class="btn btn-primary btn-sm" (click)="verifyAgent(agent.agentId)">Verify Agent</button>
+              <button class="btn btn-ghost btn-sm" (click)="rejectAgent(agent.agentId)">Reject Application</button>
+            </div>
+            <span class="badge badge-grn w-full text-center" *ngIf="agent.isVerified">Authorized Fleet Member</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL ORDERS -->
+    <div class="tab-content" *ngIf="activeSection === 'orders'">
+      <div class="card">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>Order Ref</th>
+              <th>Customer Name</th>
+              <th>Total Value</th>
+              <th>Order Status</th>
+              <th>Force Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of allOrders">
+              <td><strong>#{{ order.orderId.substring(0,8) }}</strong></td>
+              <td>{{ customerNames[order.customerId] || 'Resolving...' }}</td>
+              <td>₹{{ order.finalAmount }}</td>
+              <td><span class="badge badge-lav">{{ order.status }}</span></td>
+              <td>
+                <div class="force-update-box">
+                  <select #forceStatus class="status-dropdown-admin">
+                    <option value="PLACED" [selected]="order.status === 'PLACED'">Placed</option>
+                    <option value="CONFIRMED" [selected]="order.status === 'CONFIRMED'">Confirmed</option>
+                    <option value="PREPARING" [selected]="order.status === 'PREPARING'">Preparing</option>
+                    <option value="READY_FOR_PICKUP" [selected]="order.status === 'READY_FOR_PICKUP'">Ready</option>
+                    <option value="PICKED_UP" [selected]="order.status === 'PICKED_UP'">Picked Up</option>
+                    <option value="DELIVERED" [selected]="order.status === 'DELIVERED'">Delivered</option>
+                    <option value="CANCELLED" [selected]="order.status === 'CANCELLED'">Cancelled</option>
+                  </select>
+                  <button class="btn btn-primary btn-sm btn-update" (click)="updateOrderStatus(order.orderId, forceStatus.value)">
+                    Update
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>

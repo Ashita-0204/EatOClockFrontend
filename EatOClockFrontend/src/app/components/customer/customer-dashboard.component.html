@@ -1,0 +1,92 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <app-customer-sidebar></app-customer-sidebar>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="content-header">
+      <div>
+        <h1 class="page-title">Discover Tastes</h1>
+        <p class="page-subtitle">The best restaurants in your city</p>
+      </div>
+      <div class="header-actions">
+        <a routerLink="/customer/cart" class="cart-link">
+          <i class="fas fa-shopping-basket"></i>
+          <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+        <div class="user-trigger" 
+             (mouseenter)="showProfileDropdown = true" 
+             (mouseleave)="showProfileDropdown = false">
+          <div class="avatar-circle">👤</div>
+          <div class="dropdown-panel" *ngIf="showProfileDropdown">
+            <div class="dropdown-header">
+              <span class="user-name">Welcome Back!</span>
+              <span class="user-email">customer@eatoclock.com</span>
+            </div>
+            <a routerLink="/customer/profile" class="panel-item">
+              <i class="fas fa-id-card"></i> View Profile
+            </a>
+            <a routerLink="/customer/wallet" class="panel-item">
+              <i class="fas fa-coins"></i> Wallet Balance
+            </a>
+            <hr>
+            <button (click)="logout()" class="panel-item logout-btn">
+              <i class="fas fa-power-off"></i> Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Curating recommendations...</p>
+    </div>
+
+    <div *ngIf="error" class="error-state">
+      <div class="error-card">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+        <button (click)="fetchRestaurants()" class="btn btn-primary">Try Again</button>
+      </div>
+    </div>
+
+    <div class="search-section mt-4 mb-4">
+      <div class="search-bar">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearch()" 
+          placeholder="Search by cuisine (Italian, Pizza, etc.) or restaurant name..."
+          class="search-input"
+        >
+      </div>
+    </div>
+
+    <div *ngIf="!loading && !error" class="res-grid">
+      <div *ngFor="let restaurant of filteredRestaurants" class="res-card card" (click)="selectRestaurant(restaurant)">
+        <div class="card-img-wrapper">
+          <img [src]="restaurant.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80'" [alt]="restaurant.name">
+          <div class="card-overlay">
+            <div class="res-rating">
+              <i class="fas fa-star"></i>
+              {{ restaurant.rating | number:'1.1-1' }}
+            </div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="res-header">
+            <h3 class="res-name">{{ restaurant.name }}</h3>
+            <span class="res-tag">{{ restaurant.cuisine }}</span>
+          </div>
+          <p class="res-loc"><i class="fas fa-map-marker-alt"></i> {{ restaurant.address }}</p>
+          <div class="card-action">
+            <span class="delivery-time">30-40 mins</span>
+            <button class="btn-go"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

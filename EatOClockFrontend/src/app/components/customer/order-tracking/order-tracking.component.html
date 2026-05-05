@@ -1,0 +1,119 @@
+<div class="dashboard-container">
+  <app-customer-sidebar></app-customer-sidebar>
+
+  <main class="main-content fade-in">
+    <div class="tracking-container">
+      <header class="tracking-header" *ngIf="order">
+        <div class="order-id">Order #{{ order.orderId.substring(0, 8) }}</div>
+        <div class="res-name">{{ order.restaurantName }}</div>
+      </header>
+
+      <div class="tracking-content" *ngIf="!loading && order">
+        <div class="status-card card">
+          <div class="card-header-flex">
+            <h2 class="section-title">{{ order.status === 'Cancelled' ? 'Order Cancelled' : 'Order Status' }}</h2>
+            <button class="btn btn-success btn-sm" *ngIf="order.status === OrderStatus.Delivered" (click)="showReviewModal = true">
+              <i class="fas fa-star"></i> Rate Order
+            </button>
+          </div>
+          
+          <div class="status-stepper" *ngIf="order.status !== 'Cancelled'">
+            <div class="status-step" *ngFor="let s of statuses" [class.completed]="isCompleted(s.key)" [class.active]="order.status === s.key">
+              <div class="step-icon">{{ s.icon }}</div>
+              <div class="step-label">{{ s.label }}</div>
+              <div class="step-line" *ngIf="s.key !== OrderStatus.Delivered"></div>
+            </div>
+          </div>
+
+          <div class="cancelled-notice" *ngIf="order.status === 'Cancelled'">
+            <div class="notice-icon">❌</div>
+            <p>This order was cancelled. If you were charged, the refund will be processed to your original payment method.</p>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="info-card items-card card">
+            <h3>Order Items</h3>
+            <div class="order-item" *ngFor="let item of order.items">
+              <span class="qty">{{ item.quantity }}x</span>
+              <span class="name">{{ item.name }}</span>
+              <span class="price">{{ (item.price * item.quantity) | currency:'INR' }}</span>
+            </div>
+            <div class="order-total-row">
+              <span>Total Paid</span>
+              <strong>{{ order.finalAmount | currency:'INR' }}</strong>
+            </div>
+          </div>
+
+          <div class="info-card delivery-card card">
+            <h3>Delivery Details</h3>
+            <div class="info-group">
+              <label>Address</label>
+              <p>{{ order.deliveryAddress }}</p>
+            </div>
+            <div class="info-group">
+              <label>Mode of Payment</label>
+              <p>{{ order.modeOfPayment }}</p>
+            </div>
+            <div class="info-group" *ngIf="order.deliveryAgentId">
+              <label>Delivery Partner</label>
+              <div class="agent-info">
+                <span class="icon">🛵</span>
+                <span>Agent Assigned</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Modal -->
+      <div class="modal-backdrop" *ngIf="showReviewModal">
+        <div class="card modal-card fade-in">
+          <div class="modal-header">
+            <h2>Rate Your Experience</h2>
+            <button class="close-btn" (click)="showReviewModal = false">&times;</button>
+          </div>
+
+          <div class="rating-section">
+            <div class="rating-group">
+              <label>Food Quality</label>
+              <div class="stars">
+                <input type="radio" id="f5" name="food" [value]="5" [(ngModel)]="reviewForm.foodRating"><label for="f5">★</label>
+                <input type="radio" id="f4" name="food" [value]="4" [(ngModel)]="reviewForm.foodRating"><label for="f4">★</label>
+                <input type="radio" id="f3" name="food" [value]="3" [(ngModel)]="reviewForm.foodRating"><label for="f3">★</label>
+                <input type="radio" id="f2" name="food" [value]="2" [(ngModel)]="reviewForm.foodRating"><label for="f2">★</label>
+                <input type="radio" id="f1" name="food" [value]="1" [(ngModel)]="reviewForm.foodRating"><label for="f1">★</label>
+              </div>
+            </div>
+
+            <div class="rating-group">
+              <label>Delivery Service</label>
+              <div class="stars">
+                <input type="radio" id="d5" name="del" [value]="5" [(ngModel)]="reviewForm.deliveryRating"><label for="d5">★</label>
+                <input type="radio" id="d4" name="del" [value]="4" [(ngModel)]="reviewForm.deliveryRating"><label for="d4">★</label>
+                <input type="radio" id="d3" name="del" [value]="3" [(ngModel)]="reviewForm.deliveryRating"><label for="d3">★</label>
+                <input type="radio" id="d2" name="del" [value]="2" [(ngModel)]="reviewForm.deliveryRating"><label for="d2">★</label>
+                <input type="radio" id="d1" name="del" [value]="1" [(ngModel)]="reviewForm.deliveryRating"><label for="d1">★</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-group">
+            <label>Your Feedback</label>
+            <textarea [(ngModel)]="reviewForm.comment" placeholder="Tell us about the taste and delivery..."></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-ghost" (click)="showReviewModal = false">Cancel</button>
+            <button class="btn btn-primary" (click)="submitReview()">Submit Feedback</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Fetching live updates...</p>
+      </div>
+    </div>
+  </main>
+</div>

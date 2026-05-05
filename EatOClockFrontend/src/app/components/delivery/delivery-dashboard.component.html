@@ -1,0 +1,227 @@
+<div class="dashboard-container" [class.offline]="agent && !agent.isAvailable">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🏍️</div>
+      <span class="brand-name">Agent Hub</span>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-item" [class.active]="activeTab === 'available'" (click)="activeTab = 'available'">
+        <i class="fas fa-search-location"></i> Browse Rides
+        <span class="badge" *ngIf="availableOrders.length > 0">{{ availableOrders.length }}</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'tasks'" (click)="activeTab = 'tasks'">
+        <i class="fas fa-route"></i> My Tasks
+        <span class="badge badge-success" *ngIf="activeOrders.length > 0">{{ activeOrders.length }}</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">
+        <i class="fas fa-chart-pie"></i> Performance
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Exit App
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <!-- Registration State -->
+    <div class="onboarding-state" *ngIf="!isRegistered">
+      <div class="card premium-onboarding">
+        <div class="icon-circle">🎁</div>
+        <h2>Start Earning Today</h2>
+        <p>Join the EatOClock fleet and enjoy flexible hours with great pay.</p>
+        
+        <div class="reg-form mt-4">
+          <div class="input-group">
+            <label>Vehicle Type</label>
+            <select [(ngModel)]="regForm.vehicleType">
+              <option value="Bike">Bicycle</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Car">Car</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="text" [(ngModel)]="regForm.phoneNumber" placeholder="+91 00000 00000">
+          </div>
+          <button class="btn btn-primary w-full mt-4" (click)="register()" [disabled]="loading">
+            {{ loading ? 'Processing...' : 'Complete Registration' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Agent Dashboard -->
+    <ng-container *ngIf="isRegistered && agent">
+      <header class="content-header">
+        <div class="user-profile">
+          <div class="avatar-ring">
+            <div class="avatar">{{ agent.vehicleType[0] }}</div>
+            <div class="online-indicator" [class.is-offline]="!agent.isAvailable"></div>
+          </div>
+          <div>
+            <h1 class="page-title">Welcome back, Partner</h1>
+            <p class="page-subtitle">{{ agent.isAvailable ? 'You are currently active and visible' : 'You are currently offline' }}</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div class="status-toggle" [class.active]="agent.isAvailable" (click)="toggleAvailability()">
+            <span class="toggle-text">{{ agent.isAvailable ? 'Go Offline' : 'Go Online' }}</span>
+            <div class="toggle-switch"></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="stats-row mt-4">
+        <div class="stat-card">
+          <label>Today's Earnings</label>
+          <div class="val">₹{{ (earnings?.totalEarnings || 0) | number:'1.0-0' }}</div>
+          <div class="trend up">+12% from yesterday</div>
+        </div>
+        <div class="stat-card">
+          <label>Completed Deliveries</label>
+          <div class="val">{{ earnings?.totalDeliveries || 0 }}</div>
+          <div class="trend">All time deliveries</div>
+        </div>
+        <div class="stat-card">
+          <label>Customer Rating</label>
+          <div class="val">4.9 <i class="fas fa-star" style="color: #ffd700; font-size: 1rem;"></i></div>
+          <div class="trend">Top 5% of agents</div>
+        </div>
+      </div>
+
+      <div class="tab-content mt-4" *ngIf="activeTab === 'available'">
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h3>Available Deliveries Near You</h3>
+            <p>Orders ready for pickup at restaurants</p>
+          </div>
+          <button class="btn btn-ghost" (click)="loadDashboardData()" style="padding: 8px 12px;">
+            <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i> Refresh
+          </button>
+        </div>
+
+        <div class="rides-grid">
+          <div class="card ride-card fade-in" *ngFor="let ride of availableOrders">
+            <div class="ride-header">
+              <div class="res-info">
+                <span class="res-tag">READY FOR PICKUP</span>
+                <h3>{{ ride.restaurantName || 'Restaurant' }}</h3>
+                <p class="addr"><i class="fas fa-map-marker-alt"></i> {{ ride.deliveryAddress }}</p>
+              </div>
+              <div class="fare-box">
+                <span class="fare-label">Earning</span>
+                <span class="fare-val">₹{{ ride.finalAmount * 0.1 | number:'1.0-0' }}</span>
+              </div>
+            </div>
+
+            <div class="ride-body">
+              <div class="route-item">
+                <div class="dot pickup"></div>
+                <div class="route-info">
+                  <label>Pickup</label>
+                  <p>{{ ride.restaurantName }}</p>
+                </div>
+              </div>
+              <div class="route-line"></div>
+              <div class="route-item">
+                <div class="dot drop"></div>
+                <div class="route-info">
+                  <label>Dropoff</label>
+                  <p>{{ ride.deliveryAddress }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="ride-footer">
+              <div class="order-meta">
+                <span><i class="fas fa-box"></i> {{ ride.items.length }} Items</span>
+                <span><i class="fas fa-clock"></i> 20 mins</span>
+              </div>
+              <button class="btn btn-primary btn-accept" (click)="acceptOrder(ride)">
+                Accept Ride
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="availableOrders.length === 0">
+            <div class="empty-icon">🏜️</div>
+            <p>No rides available right now. We'll notify you!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY TASKS TAB -->
+      <div class="tab-content mt-4" *ngIf="activeTab === 'tasks'">
+        <div class="section-title">
+          <h3>Current Active Rides</h3>
+          <p>In-progress deliveries assigned to you</p>
+        </div>
+
+        <div class="rides-grid">
+          <div class="card ride-card active-ride fade-in" *ngFor="let task of activeOrders">
+            <div class="ride-status-bar" [class.preparing]="task.status === 'READY_FOR_PICKUP'">
+              {{ task.status.replace('_', ' ') }}
+            </div>
+            <div class="ride-header">
+              <div class="res-info">
+                <h3>{{ task.restaurantName || 'Order ' + task.orderId.substring(0,8) }}</h3>
+                <p class="addr">To: {{ task.deliveryAddress }}</p>
+              </div>
+            </div>
+            
+            <div class="ride-footer mt-4">
+              <button class="btn btn-success w-full" *ngIf="task.status === 'PICKED_UP'" (click)="completeStep(task, 'deliver')">
+                <i class="fas fa-check-circle"></i> Complete Delivery
+              </button>
+              <button class="btn btn-warning w-full" *ngIf="task.status === 'READY_FOR_PICKUP'" (click)="completeStep(task, 'pickup')">
+                <i class="fas fa-box"></i> Confirm Pickup
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="activeOrders.length === 0">
+            <div class="empty-icon">📦</div>
+            <p>You have no active rides. Pick one from the browser!</p>
+            <button class="btn btn-ghost mt-2" (click)="activeTab = 'available'">Browse Rides</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE TAB -->
+      <div class="tab-content mt-4" *ngIf="activeTab === 'analytics'">
+        <div class="section-title">
+          <h3>Earning Reports</h3>
+          <p>Your delivery history and performance metrics</p>
+        </div>
+
+        <div class="card analytics-card">
+          <div class="table-responsive">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Deliveries</th>
+                  <th>Earnings</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of analyticsData">
+                  <td>{{ row.date }}</td>
+                  <td>{{ row.count }}</td>
+                  <td><strong>₹{{ row.pay | number:'1.0-0' }}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </main>
+</div>

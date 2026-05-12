@@ -1,0 +1,3 @@
+/api/*  https://eatoclock-gateway.onrender.com/api/:splat  200
+/hubs/* https://eatoclock-gateway.onrender.com/hubs/:splat 200
+/*      /index.html                                         200

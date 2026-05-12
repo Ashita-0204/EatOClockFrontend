@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -17,7 +18,7 @@ export interface WalletTopupInitiate {
   providedIn: 'root'
 })
 export class WalletService {
-  private readonly WALLET_BASE = '/api/wallet';
+  private readonly WALLET_BASE = `${environment.apiUrl}/api/wallet`;
 
   constructor(private http: HttpClient) {}
 

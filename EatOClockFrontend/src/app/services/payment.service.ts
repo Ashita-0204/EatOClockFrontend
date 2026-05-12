@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,8 +9,8 @@ declare var Razorpay: any;
   providedIn: 'root'
 })
 export class PaymentService {
-  private readonly API_BASE = '/api/payments';
-  private readonly WALLET_BASE = '/api/wallet';
+  private readonly API_BASE = `${environment.apiUrl}/api/payments`;
+  private readonly WALLET_BASE = `${environment.apiUrl}/api/wallet`;
 
   constructor(private http: HttpClient) { }
 

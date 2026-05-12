@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { MenuCategory, MenuItem } from '../models/menu.models';
   providedIn: 'root'
 })
 export class MenuService {
-  private readonly API_BASE = '/api/menu';
+  private readonly API_BASE = `${environment.apiUrl}/api/menu`;
 
   constructor(private http: HttpClient) {}
 

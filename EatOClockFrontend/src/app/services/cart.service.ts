@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
@@ -7,7 +8,7 @@ import { Cart, ApiResponse } from '../models/cart.models';
   providedIn: 'root'
 })
 export class CartService {
-  private readonly API_BASE = '/api/cart';
+  private readonly API_BASE = `${environment.apiUrl}/api/cart`;
   private cartSubject = new BehaviorSubject<Cart | null>(null);
   cart$ = this.cartSubject.asObservable();
 

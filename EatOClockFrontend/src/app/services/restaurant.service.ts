@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { Restaurant } from '../models/restaurant.models';
   providedIn: 'root'
 })
 export class RestaurantService {
-  private readonly API_BASE = '/api/restaurant';
+  private readonly API_BASE = `${environment.apiUrl}/api/restaurant`;
 
   constructor(private http: HttpClient) {}
 

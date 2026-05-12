@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -18,7 +19,7 @@ export interface DeliveryAgent {
   providedIn: 'root'
 })
 export class DeliveryService {
-  private readonly API_BASE = '/api/agents';
+  private readonly API_BASE = `${environment.apiUrl}/api/agents`;
 
   constructor(private http: HttpClient) {}
 

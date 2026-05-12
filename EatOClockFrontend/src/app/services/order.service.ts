@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { ApiResponse } from '@models/cart.models';
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly API_BASE = '/api/orders';
+  private readonly API_BASE = `${environment.apiUrl}/api/orders`;
 
   constructor(private http: HttpClient) {}
 

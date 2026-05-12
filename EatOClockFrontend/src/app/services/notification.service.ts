@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
@@ -40,7 +41,7 @@ export class NotificationService {
     if (!token) return;
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/hubs/notifications', {
+      .withUrl(`${environment.hubUrl}/hubs/notifications`, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()

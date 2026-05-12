@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -19,7 +20,7 @@ export interface Review {
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = '/api/reviews'; // Consistent with other services
+  private apiUrl = `${environment.apiUrl}/api/reviews`; // Consistent with other services
 
   constructor(private http: HttpClient) {}
 

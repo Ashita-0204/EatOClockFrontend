@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -6,7 +7,7 @@ import { AuthResponse, LoginRequest, RegisterRequest, Role, UserDTO } from '../m
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_BASE = '/api/auth';
+  private readonly API_BASE = `${environment.apiUrl}/api/auth`;
   private readonly ACCESS_TOKEN_KEY = 'accessToken';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
   private readonly ROLE_KEY = 'role';

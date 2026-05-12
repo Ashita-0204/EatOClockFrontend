@@ -18,7 +18,7 @@ export interface WalletTopupInitiate {
   providedIn: 'root'
 })
 export class WalletService {
-  private readonly WALLET_BASE = `${environment.apiUrl}/api/wallet`;
+  private readonly WALLET_BASE = `${environment.apiUrl}/api/v1/wallet`;
 
   constructor(private http: HttpClient) {}
 

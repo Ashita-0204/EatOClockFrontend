@@ -8,7 +8,7 @@ import { MenuCategory, MenuItem } from '../models/menu.models';
   providedIn: 'root'
 })
 export class MenuService {
-  private readonly API_BASE = `${environment.apiUrl}/api/menu`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/menu`;
 
   constructor(private http: HttpClient) {}
 

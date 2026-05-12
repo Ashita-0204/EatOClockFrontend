@@ -20,7 +20,7 @@ export interface Review {
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = `${environment.apiUrl}/api/reviews`; // Consistent with other services
+  private apiUrl = `${environment.apiUrl}/api/v1/reviews`; // Consistent with other services
 
   constructor(private http: HttpClient) {}
 

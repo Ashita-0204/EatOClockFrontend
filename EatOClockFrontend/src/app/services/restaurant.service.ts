@@ -8,7 +8,7 @@ import { Restaurant } from '../models/restaurant.models';
   providedIn: 'root'
 })
 export class RestaurantService {
-  private readonly API_BASE = `${environment.apiUrl}/api/restaurant`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/restaurant`;
 
   constructor(private http: HttpClient) {}
 

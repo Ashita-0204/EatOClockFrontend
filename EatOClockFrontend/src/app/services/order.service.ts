@@ -9,7 +9,7 @@ import { ApiResponse } from '@models/cart.models';
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly API_BASE = `${environment.apiUrl}/api/orders`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/orders`;
 
   constructor(private http: HttpClient) {}
 

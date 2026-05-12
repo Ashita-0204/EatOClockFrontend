@@ -9,8 +9,8 @@ declare var Razorpay: any;
   providedIn: 'root'
 })
 export class PaymentService {
-  private readonly API_BASE = `${environment.apiUrl}/api/payments`;
-  private readonly WALLET_BASE = `${environment.apiUrl}/api/wallet`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/payments`;
+  private readonly WALLET_BASE = `${environment.apiUrl}/api/v1/wallet`;
 
   constructor(private http: HttpClient) { }
 

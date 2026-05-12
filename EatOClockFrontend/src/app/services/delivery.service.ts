@@ -19,7 +19,7 @@ export interface DeliveryAgent {
   providedIn: 'root'
 })
 export class DeliveryService {
-  private readonly API_BASE = `${environment.apiUrl}/api/agents`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/agents`;
 
   constructor(private http: HttpClient) {}
 

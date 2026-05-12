@@ -8,7 +8,7 @@ import { Cart, ApiResponse } from '../models/cart.models';
   providedIn: 'root'
 })
 export class CartService {
-  private readonly API_BASE = `${environment.apiUrl}/api/cart`;
+  private readonly API_BASE = `${environment.apiUrl}/api/v1/cart`;
   private cartSubject = new BehaviorSubject<Cart | null>(null);
   cart$ = this.cartSubject.asObservable();
 

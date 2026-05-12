@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: '',
-  hubUrl: ''
+  apiUrl: 'https://eatoclock-gateway.onrender.com',
+  hubUrl: 'https://eatoclock-gateway.onrender.com'
 };
+ 

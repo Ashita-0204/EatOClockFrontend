@@ -31,9 +31,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "security": {
-              "allowedHosts": []
-            }
+            "outputPath": "dist/eatoclockfrontend"
           },
           "configurations": {
             "production": {
